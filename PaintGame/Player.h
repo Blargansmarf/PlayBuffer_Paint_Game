@@ -9,7 +9,9 @@ public:
 	void setPos(float x, float y);
 	void setVel(float x, float y);
 	void setAccel(float a);
-
+	void setSpriteID(int id);
+	
+	int getSpriteID();
 	float getX();
 	float getY();
 	float getVelX();
@@ -24,4 +26,5 @@ private:
 	float acceleration;
 	float width, height;
 	bool jumped;
+	int spriteID;
 };

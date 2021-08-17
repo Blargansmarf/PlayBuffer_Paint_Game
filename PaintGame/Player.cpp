@@ -2,26 +2,14 @@
 
 Player::Player()
 {
-	Player::xPos = 0.0f;
-	Player::yPos = 0.0f;
-	Player::xVel = 0.0f;
-	Player::yVel = 0.0f;
-	Player::acceleration = 0.0f;
-	Player::width = 10.0f;
-	Player::height = 10.0f;
-	Player::jumped = false;
-}
-
-Player::Player(float w, float h)
-{
-	Player::xPos = 0.0f;
-	Player::yPos = 0.0f;
-	Player::xVel = 0.0f;
-	Player::yVel = 0.0f;
-	Player::acceleration = 0.0f;
-	Player::width = w;
-	Player::height = h;
-	Player::jumped = false;
+	xPos = 0.0f;
+	yPos = 0.0f;
+	xVel = 0.0f;
+	yVel = 0.0f;
+	acceleration = 0.0f;
+	width = 0.0f;
+	height = 0.0f;
+	jumped = false;
 }
 
 Player::~Player()
@@ -29,60 +17,70 @@ Player::~Player()
 
 }
 
+void Player::setSpriteID(int id)
+{
+	spriteID = id;
+}
+
 void Player::setDim(float w, float h)
 {
-	Player::width = w;
-	Player::height = h;
+	width = w;
+	height = h;
 }
 
 void Player::setPos(float x, float y)
 {
-	Player::xPos = x;
-	Player::yPos = y;
+	xPos = x;
+	yPos = y;
 }
 
 void Player::setVel(float x, float y)
 {
-	Player::xVel = x;
-	Player::yVel = y;
+	xVel = x;
+	yVel = y;
 }
 
 void Player::setAccel(float a)
 {
-	Player::acceleration = a;
+	acceleration = a;
 }
 
 float Player::getX()
 {
-	return Player::xPos;
+	return xPos;
 }
 
 float Player::getY()
 {
-	return Player::yPos;
+	return yPos;
 }
 
 float Player::getVelX()
 {
-	return Player::xVel;
+	return xVel;
 }
 
 float Player::getVelY()
 {
-	return Player::yVel;
+	return yVel;
 }
 
 float Player::getAccel()
 {
-	return Player::acceleration;
+	return acceleration;
 }
 
 float Player::getW()
 {
-	return Player::width;
+	return width;
 }
 
 float Player::getH()
 {
-	return Player::height;
+	return height;
+}
+
+int Player::getSpriteID()
+{
+	return spriteID;
 }
