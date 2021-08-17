@@ -9,7 +9,7 @@ const int DISPLAY_HEIGHT = 720;
 const int DISPLAY_SCALE = 1;
 
 Player player;
-Point2D playerPos;
+Point2D playerPos(0, 0);
 
 const float gravity = .1f;
 const float maxVelX = 9.0f;
@@ -24,13 +24,13 @@ void MainGameEntry( PLAY_IGNORE_COMMAND_LINE )
 
 	player.setAccel(.5f);
 	player.setPos(DISPLAY_WIDTH / 2, DISPLAY_HEIGHT / 2);
-	player.setSpriteID(Play::GetSpriteId("Data//Sprites//WhiteSquare.png"));
+	player.setSpriteID(0);
 }
 
 // Called by PlayBuffer every frame (60 times a second!)
 bool MainGameUpdate( float elapsedTime )
 {
-	Play::ClearDrawingBuffer( Play::cCyan );
+	Play::ClearDrawingBuffer( Play::cGrey );
 	
 	ApplyPhysics();
 	playerPos.x = player.getX();
@@ -50,5 +50,7 @@ int MainGameExit( void )
 
 void ApplyPhysics()
 {
-	player.setPos(player.getX() + player.getVelX(), player.getY() + player.getVelY() + gravity);
+	player.setVel(player.getVelX(), player.getVelY() + gravity);
+	player.setPos(player.getX() + player.getVelX(), player.getY() + player.getVelY());
+	
 }
