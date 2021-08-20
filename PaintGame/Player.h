@@ -7,7 +7,11 @@ public:
 
 	void setDim(float w, float h);
 	void setPos(float x, float y);
+	void setPosX(float x);
+	void setPosY(float y);
 	void setVel(float x, float y);
+	void setVelX(float x);
+	void setVelY(float y);
 	void setAccel(float a);
 	void setSpriteID(int id);
 	

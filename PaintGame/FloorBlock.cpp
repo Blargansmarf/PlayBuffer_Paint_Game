@@ -23,6 +23,16 @@ float FloorBlock::getY()
 	return FloorBlock::yPos;
 }
 
+void FloorBlock::setX(float x)
+{
+	xPos = x;
+}
+
+void FloorBlock::setY(float y)
+{
+	yPos = y;
+}
+
 float FloorBlock::getW()
 {
 	return FloorBlock::width;

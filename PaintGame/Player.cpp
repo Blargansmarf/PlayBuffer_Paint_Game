@@ -34,9 +34,29 @@ void Player::setPos(float x, float y)
 	yPos = y;
 }
 
+void Player::setPosX(float x)
+{
+	xPos = x;
+}
+
+void Player::setPosY(float y)
+{
+	yPos = y;
+}
+
 void Player::setVel(float x, float y)
 {
 	xVel = x;
+	yVel = y;
+}
+
+void Player::setVelX(float x)
+{
+	xVel = x;
+}
+
+void Player::setVelY(float y)
+{
 	yVel = y;
 }
 

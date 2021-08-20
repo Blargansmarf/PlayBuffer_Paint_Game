@@ -6,6 +6,8 @@ public:
 
 	float getX();
 	float getY();
+	void setX(float x);
+	void setY(float y);
 	float getW();
 	float getH();
 
