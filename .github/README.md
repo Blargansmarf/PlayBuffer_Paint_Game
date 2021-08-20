@@ -3,4 +3,5 @@ This is a remake of an old game I made originally in XNA (now MonoGame). This ti
 Controls
 
 Left/Right Arrow keys to move
+
 LeftShift to sprint
