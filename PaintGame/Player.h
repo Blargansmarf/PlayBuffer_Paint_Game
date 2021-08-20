@@ -14,6 +14,8 @@ public:
 	void setVelY(float y);
 	void setAccel(float a);
 	void setSpriteID(int id);
+	void jump();
+	void endJump();
 	
 	int getSpriteID();
 	float getX();
@@ -23,6 +25,7 @@ public:
 	float getAccel();
 	float getW();
 	float getH();
+	bool isJumped();
 		
 private:
 	float xPos, yPos;

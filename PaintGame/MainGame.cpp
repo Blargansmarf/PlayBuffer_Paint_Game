@@ -11,11 +11,13 @@ const int DISPLAY_SCALE = 1;
 Player player;
 Point2D playerPos(0, 0);
 
-const float gravity = .1f;
-const float friction = .2f;
+const float gravity = .6f;
+const float friction = .25f;
+const float acceleration = .7f;
 const float sprintBonus = 5.0f;
-const float maxVelX = 9.0f;
+const float maxVelX = 10.0f;
 const float maxVelY = 11.0f;
+const float jumpHeight = 15.0f;
 
 void ApplyPhysics();
 void CheckBounds();
@@ -25,9 +27,10 @@ void MainGameEntry( PLAY_IGNORE_COMMAND_LINE )
 {
 	Play::CreateManager( DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_SCALE );
 
-	player.setAccel(.5f);
+	player.setAccel(acceleration);
 	player.setPos(DISPLAY_WIDTH / 2, DISPLAY_HEIGHT / 2);
 	player.setSpriteID(0);
+	player.jump();
 }
 
 // Called by PlayBuffer every frame (60 times a second!)
@@ -37,6 +40,7 @@ bool MainGameUpdate( float elapsedTime )
 	
 	ApplyPhysics();
 	CheckBounds();
+
 	playerPos.x = player.getX();
 	playerPos.y = player.getY();
 	Play::DrawSprite(player.getSpriteID(), playerPos, 0);
@@ -116,8 +120,13 @@ void ApplyPhysics()
 			}
 		}
 	}
-	
 
+	if (Play::KeyPressed(VK_SPACE) && !player.isJumped())
+	{
+		player.setVelY(-jumpHeight);
+		player.jump();
+	}
+	
 	player.setPos(player.getX() + player.getVelX(), player.getY() + player.getVelY());
 }
 
@@ -126,5 +135,6 @@ void CheckBounds()
 	if (player.getY() > (DISPLAY_HEIGHT * .666f))
 	{
 		player.setPosY(DISPLAY_HEIGHT * .666f);
+		player.endJump();
 	}
 }

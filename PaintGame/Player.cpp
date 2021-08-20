@@ -104,3 +104,18 @@ int Player::getSpriteID()
 {
 	return spriteID;
 }
+
+void Player::jump()
+{
+	jumped = true;
+}
+
+void Player::endJump()
+{
+	jumped = false;
+}
+
+bool Player::isJumped()
+{
+	return jumped;
+}
