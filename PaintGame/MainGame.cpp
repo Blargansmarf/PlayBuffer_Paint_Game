@@ -126,6 +126,10 @@ void ApplyPhysics()
 		player.setVelY(-jumpHeight);
 		player.jump();
 	}
+	else if (!Play::KeyDown(VK_SPACE) && player.isJumped() && player.getVelY() < 0)
+	{
+		player.setVelY(0);
+	}
 	
 	player.setPos(player.getX() + player.getVelX(), player.getY() + player.getVelY());
 }
