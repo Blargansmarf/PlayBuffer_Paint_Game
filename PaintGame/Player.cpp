@@ -113,6 +113,7 @@ void Player::jump()
 void Player::endJump()
 {
 	jumped = false;
+	yVel = 0;
 }
 
 bool Player::isJumped()

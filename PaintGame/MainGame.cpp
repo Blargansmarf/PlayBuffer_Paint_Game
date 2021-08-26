@@ -10,6 +10,7 @@ const int DISPLAY_SCALE = 1;
 
 Player player;
 Point2D playerPos(0, 0);
+FloorBlock levelBlocks[1];
 
 const float gravity = .6f;
 const float friction = .25f;
@@ -21,15 +22,19 @@ const float jumpHeight = 15.0f;
 
 void ApplyPhysics();
 void CheckBounds();
+void CreateLevel();
+void CheckLevelCollision();
 
 // The entry point for a PlayBuffer program
 void MainGameEntry( PLAY_IGNORE_COMMAND_LINE )
 {
 	Play::CreateManager( DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_SCALE );
 
+	CreateLevel();
+
 	player.setAccel(acceleration);
 	player.setPos(DISPLAY_WIDTH / 2, DISPLAY_HEIGHT / 2);
-	player.setSpriteID(0);
+	player.setSpriteID(1);
 	player.jump();
 }
 
@@ -44,6 +49,10 @@ bool MainGameUpdate( float elapsedTime )
 	playerPos.x = player.getX();
 	playerPos.y = player.getY();
 	Play::DrawSprite(player.getSpriteID(), playerPos, 0);
+	for (int x = 0; x < sizeof(levelBlocks) / sizeof(levelBlocks[0]); x++)
+	{
+		Play::DrawSprite(levelBlocks[x].getSpriteID(), levelBlocks[x].getPos(), 0);
+	}
 
 	Play::PresentDrawingBuffer();
 	return Play::KeyDown( VK_ESCAPE );
@@ -59,6 +68,11 @@ int MainGameExit( void )
 void ApplyPhysics()
 {
 	player.setVelY(player.getVelY() + gravity);
+	if (player.getVelY() > maxVelY)
+	{
+		player.setVelY(maxVelY);
+	}
+
 	if (player.getVelX() > 0)
 	{
 		if (player.getVelX() > friction)
@@ -136,9 +150,23 @@ void ApplyPhysics()
 
 void CheckBounds()
 {
-	if (player.getY() > (DISPLAY_HEIGHT * .666f))
+	if (player.getY() > levelBlocks[0].getY() - Play::GetSpriteHeight(player.getSpriteID()) &&
+		player.getX() + Play::GetSpriteWidth(player.getSpriteID()) > levelBlocks[0].getX() &&
+		player.getX() < levelBlocks[0].getX() + Play::GetSpriteWidth(levelBlocks[0].getSpriteID()))
 	{
-		player.setPosY(DISPLAY_HEIGHT * .666f);
+		player.setPosY(levelBlocks[0].getY() - Play::GetSpriteHeight(player.getSpriteID()));
 		player.endJump();
 	}
+}
+
+void CreateLevel()
+{
+	levelBlocks[0].setSpriteID(0);
+	levelBlocks[0].setX(DISPLAY_WIDTH * .333f);
+	levelBlocks[0].setY(DISPLAY_HEIGHT * .666f);
+}
+
+void CheckLevelCollision()
+{
+
 }

@@ -1,17 +1,21 @@
+#include "Play.h"
+
 class FloorBlock
 {
 public:
-	FloorBlock(float x, float y, float w, float h);
+	FloorBlock();
 	~FloorBlock();
 
 	float getX();
 	float getY();
 	void setX(float x);
 	void setY(float y);
-	float getW();
-	float getH();
+	void setPos(Point2D p);
+	Point2D getPos();
+	void setSpriteID(int i);
+	int getSpriteID();
 
 private:
-	float xPos, yPos;
-	float width, height;
+	int spriteID;
+	Point2D pos;
 };

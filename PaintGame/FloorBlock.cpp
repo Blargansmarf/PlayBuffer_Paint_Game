@@ -1,11 +1,8 @@
 #include "FloorBlock.h"
 
-FloorBlock::FloorBlock(float x, float y, float w, float h)
+FloorBlock::FloorBlock()
 {
-	FloorBlock::xPos = x;
-	FloorBlock::yPos = y;
-	FloorBlock::width = w;
-	FloorBlock::height = h;
+	
 }
 
 FloorBlock::~FloorBlock()
@@ -15,30 +12,40 @@ FloorBlock::~FloorBlock()
 
 float FloorBlock::getX()
 {
-	return FloorBlock::xPos;
+	return pos.x;
 }
 
 float FloorBlock::getY()
 {
-	return FloorBlock::yPos;
+	return pos.y;
 }
 
 void FloorBlock::setX(float x)
 {
-	xPos = x;
+	pos.x = x;
 }
 
 void FloorBlock::setY(float y)
 {
-	yPos = y;
+	pos.y = y;
 }
 
-float FloorBlock::getW()
+void FloorBlock::setPos(Point2D p)
 {
-	return FloorBlock::width;
+	pos = p;
 }
 
-float FloorBlock::getH()
+Point2D FloorBlock::getPos()
 {
-	return FloorBlock::height;
+	return pos;
+}
+
+void FloorBlock::setSpriteID(int i)
+{
+	spriteID = i;
+}
+
+int FloorBlock::getSpriteID()
+{
+	return spriteID;
 }
