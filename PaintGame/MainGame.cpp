@@ -10,7 +10,7 @@ const int DISPLAY_SCALE = 1;
 
 Player player;
 Point2D playerPos(0, 0);
-FloorBlock levelBlocks[5];
+FloorBlock levelBlocks[10];
 
 const float gravity = .6f;
 const float friction = .25f;
@@ -50,7 +50,7 @@ bool MainGameUpdate( float elapsedTime )
 {
 	Play::ClearDrawingBuffer( Play::cGrey );
 	
-	if (Play::KeyDown(0x52))
+	if (Play::KeyDown(0x52) || player.getY() > DISPLAY_HEIGHT)
 	{
 		CreateLevel();
 		InitPlayer();
@@ -58,6 +58,7 @@ bool MainGameUpdate( float elapsedTime )
 
 	ApplyPhysics();
 	CheckBounds();
+	TranslateLevel();
 
 	playerPos.x = player.getX();
 	playerPos.y = player.getY();
@@ -148,6 +149,11 @@ void ApplyPhysics()
 		}
 	}
 
+	if (player.getVelY() > 1.0f)
+	{
+		player.jump();
+	}
+
 	if (Play::KeyPressed(VK_SPACE) && !player.isJumped())
 	{
 		player.setVelY(-jumpHeight);
@@ -158,7 +164,7 @@ void ApplyPhysics()
 		player.setVelY(0);
 	}
 	
-	TranslateLevel();
+	
 	//player.setPos(player.getX() + player.getVelX(), player.getY() + player.getVelY());
 	player.setPosY(player.getY() + player.getVelY());
 }
@@ -195,11 +201,19 @@ void CheckBounds()
 
 void CreateLevel()
 {
+
 	for (int x = 0; x < sizeof(levelBlocks) / sizeof(levelBlocks[0]); x++)
 	{
 		levelBlocks[x].setSpriteID(1);
 		levelBlocks[x].setX((DISPLAY_WIDTH * .333f + 75)*(x+1));
-		levelBlocks[x].setY(DISPLAY_HEIGHT * .666f);
+		if (x < 5)
+		{
+			levelBlocks[x].setY(DISPLAY_HEIGHT * .666f - (x * 25));
+		}
+		else
+		{
+			levelBlocks[x].setY(levelBlocks[x-1].getY() + ((x-5) * 25));
+		}
 	}
 }
 
