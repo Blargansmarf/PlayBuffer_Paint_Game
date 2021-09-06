@@ -10,7 +10,7 @@ const int DISPLAY_SCALE = 1;
 
 Player player;
 Point2D playerPos(0, 0);
-FloorBlock levelBlocks[1];
+FloorBlock levelBlocks[5];
 
 const float gravity = .6f;
 const float friction = .25f;
@@ -24,6 +24,8 @@ void ApplyPhysics();
 void CheckBounds();
 void CreateLevel();
 void CheckLevelCollision();
+void InitPlayer();
+void TranslateLevel();
 
 // The entry point for a PlayBuffer program
 void MainGameEntry( PLAY_IGNORE_COMMAND_LINE )
@@ -31,10 +33,15 @@ void MainGameEntry( PLAY_IGNORE_COMMAND_LINE )
 	Play::CreateManager( DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_SCALE );
 
 	CreateLevel();
+	InitPlayer();
+}
 
+void InitPlayer()
+{
 	player.setAccel(acceleration);
 	player.setPos(DISPLAY_WIDTH / 2, DISPLAY_HEIGHT / 2);
-	player.setSpriteID(1);
+	player.setVel(0.0f, 0.0f);
+	player.setSpriteID(0);
 	player.jump();
 }
 
@@ -43,6 +50,12 @@ bool MainGameUpdate( float elapsedTime )
 {
 	Play::ClearDrawingBuffer( Play::cGrey );
 	
+	if (Play::KeyDown(0x52))
+	{
+		CreateLevel();
+		InitPlayer();
+	}
+
 	ApplyPhysics();
 	CheckBounds();
 
@@ -145,25 +158,49 @@ void ApplyPhysics()
 		player.setVelY(0);
 	}
 	
-	player.setPos(player.getX() + player.getVelX(), player.getY() + player.getVelY());
+	TranslateLevel();
+	//player.setPos(player.getX() + player.getVelX(), player.getY() + player.getVelY());
+	player.setPosY(player.getY() + player.getVelY());
+}
+
+void TranslateLevel()
+{
+	//Point2D p = { 0.0f,0.0f };
+	for (int x = 0; x < sizeof(levelBlocks) / sizeof(levelBlocks[0]); x++)
+	{
+		//p.x = levelBlocks[x].getX() - player.getVelX();
+		//p.y = levelBlocks[x].getY() - player.getVelY();
+		levelBlocks[x].setX(levelBlocks[x].getX() - player.getVelX());
+	}
 }
 
 void CheckBounds()
 {
-	if (player.getY() > levelBlocks[0].getY() - Play::GetSpriteHeight(player.getSpriteID()) &&
-		player.getX() + Play::GetSpriteWidth(player.getSpriteID()) > levelBlocks[0].getX() &&
-		player.getX() < levelBlocks[0].getX() + Play::GetSpriteWidth(levelBlocks[0].getSpriteID()))
+	for (int x = 0; x < sizeof(levelBlocks) / sizeof(levelBlocks[0]); x++)
 	{
-		player.setPosY(levelBlocks[0].getY() - Play::GetSpriteHeight(player.getSpriteID()));
-		player.endJump();
+		if (//bottom of player
+			player.getY() + Play::GetSpriteHeight(player.getSpriteID()) > levelBlocks[x].getY() &&
+			//top of player
+			player.getY() < levelBlocks[x].getY() + Play::GetSpriteHeight(levelBlocks[x].getSpriteID()) &&
+			//right of player
+			player.getX() + Play::GetSpriteWidth(player.getSpriteID()) > levelBlocks[x].getX() &&
+			//left of player
+			player.getX() < levelBlocks[x].getX() + Play::GetSpriteWidth(levelBlocks[x].getSpriteID()))
+		{
+			player.setPosY(levelBlocks[x].getY() - Play::GetSpriteHeight(player.getSpriteID()));
+			player.endJump();
+		}
 	}
 }
 
 void CreateLevel()
 {
-	levelBlocks[0].setSpriteID(0);
-	levelBlocks[0].setX(DISPLAY_WIDTH * .333f);
-	levelBlocks[0].setY(DISPLAY_HEIGHT * .666f);
+	for (int x = 0; x < sizeof(levelBlocks) / sizeof(levelBlocks[0]); x++)
+	{
+		levelBlocks[x].setSpriteID(1);
+		levelBlocks[x].setX((DISPLAY_WIDTH * .333f + 75)*(x+1));
+		levelBlocks[x].setY(DISPLAY_HEIGHT * .666f);
+	}
 }
 
 void CheckLevelCollision()
