@@ -5,3 +5,5 @@ Controls
 Left/Right Arrow keys to move
 
 LeftShift to sprint
+
+Space to jump
