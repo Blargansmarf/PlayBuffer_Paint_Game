@@ -182,27 +182,87 @@ void TranslateLevel()
 
 void CheckBounds()
 {
+	Point2D p1 = { player.getX(), player.getY() };
+	Point2D p2 = { player.getX() + Play::GetSpriteWidth(player.getSpriteID()), player.getY() };
+	Point2D p3 = { player.getX(), player.getY() + Play::GetSpriteHeight(player.getSpriteID()) };
+	Point2D p4 = { player.getX() + Play::GetSpriteWidth(player.getSpriteID()), player.getY() + Play::GetSpriteHeight(player.getSpriteID()) };
+	
+	Point2D r1;
+	Point2D r2;
+	Point2D r3;
+	Point2D r4;
+
 	for (int x = 0; x < sizeof(levelBlocks) / sizeof(levelBlocks[0]); x++)
 	{
-		if (//bottom of player
-			player.getY() + Play::GetSpriteHeight(player.getSpriteID()) > levelBlocks[x].getY() &&
-			//top of player
-			player.getY() < levelBlocks[x].getY() + Play::GetSpriteHeight(levelBlocks[x].getSpriteID()) &&
-			//right of player
-			player.getX() + Play::GetSpriteWidth(player.getSpriteID()) > levelBlocks[x].getX() &&
-			//left of player
-			player.getX() < levelBlocks[x].getX() + Play::GetSpriteWidth(levelBlocks[x].getSpriteID()))
+		r1 = { levelBlocks[x].getX(), levelBlocks[x].getY() };
+		r2 = { levelBlocks[x].getX() + Play::GetSpriteWidth(levelBlocks[x].getSpriteID()), levelBlocks[x].getY() };
+		r3 = { levelBlocks[x].getX(), levelBlocks[x].getY() + Play::GetSpriteHeight(levelBlocks[x].getSpriteID()) };
+		r4 = { levelBlocks[x].getX() + Play::GetSpriteWidth(levelBlocks[x].getSpriteID()), levelBlocks[x].getY() + Play::GetSpriteHeight(levelBlocks[x].getSpriteID()) };
+
+		if (p3.y > r1.y &&
+			p4.x > r1.x &&
+			p3.x < r2.x &&
+			p1.y < r1.y)
 		{
-			player.setPosY(levelBlocks[x].getY() - Play::GetSpriteHeight(player.getSpriteID()));
+			player.setPosY(r1.y - Play::GetSpriteHeight(player.getSpriteID()));
+			player.setVelY(0);
 			player.endJump();
+			break;
 		}
+		if (p1.y < r3.y &&
+			p4.x > r1.x &&
+			p3.x < r2.x &&
+			p3.y > r3.y)
+		{
+			player.setPosY(r3.y);
+			player.setVelY(0);
+			break;
+		}
+		if (p2.x > r1.x &&
+			p4.y > r1.y &&
+			p2.y < r3.y &&
+			p1.x < r1.x)
+		{
+			float rev = player.getX();
+			rev = (r1.x - Play::GetSpriteWidth(player.getSpriteID())) - rev;
+			player.setVelX(rev);
+			TranslateLevel();
+			player.setPosX(levelBlocks[x].getX() - Play::GetSpriteWidth(player.getSpriteID()));
+			player.setVelX(0);
+			break;
+		}
+		if (p1.x < r2.x &&
+			p4.y > r1.y &&
+			p2.y < r3.y &&
+			p2.x > r2.x)
+		{
+			float rev = player.getX();
+			rev = rev - r2.x;
+			player.setVelX(rev);
+			TranslateLevel();
+			player.setPosX(levelBlocks[x].getX() + Play::GetSpriteWidth(levelBlocks[x].getSpriteID()));
+			player.setVelX(0);
+			break;
+		}
+		
 	}
 }
 
 void CreateLevel()
 {
+	levelBlocks[0].setSpriteID(1);
+	levelBlocks[0].setX((DISPLAY_WIDTH * .333f + 75));
+	levelBlocks[0].setY(DISPLAY_HEIGHT * .666f);
 
-	for (int x = 0; x < sizeof(levelBlocks) / sizeof(levelBlocks[0]); x++)
+	levelBlocks[1].setSpriteID(1);
+	levelBlocks[1].setX((DISPLAY_WIDTH * .333f - 100));
+	levelBlocks[1].setY(DISPLAY_HEIGHT * .666f - 220);
+
+	levelBlocks[2].setSpriteID(1);
+	levelBlocks[2].setX((DISPLAY_WIDTH * .333f + 275));
+	levelBlocks[2].setY(DISPLAY_HEIGHT * .666f - 220);
+
+	for (int x = 3; x < sizeof(levelBlocks) / sizeof(levelBlocks[0]); x++)
 	{
 		levelBlocks[x].setSpriteID(1);
 		levelBlocks[x].setX((DISPLAY_WIDTH * .333f + 75)*(x+1));
