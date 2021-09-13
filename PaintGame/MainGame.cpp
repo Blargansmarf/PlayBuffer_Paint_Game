@@ -260,14 +260,51 @@ void CheckBounds()
 			}
 			break;
 		}
-		//and so on...////////////
-		////////////////////////
-		////////////////////
-		////////////////
-		//////////////
-		/////////////
-		///////////
-
+		if (p4.x > r1.x &&
+			p4.y > r1.y &&
+			p2.y < r1.y &&
+			p3.x < r1.x)
+		{
+			if (abs(p4.x - r1.x) <= abs(p4.y - r1.y))
+			{
+				SetLeft(x);
+			}
+			else
+			{
+				SetTop(x);
+			}
+			break;
+		}
+		if (p1.x < r4.x &&
+			p1.y < r4.y &&
+			p2.x > r4.x &&
+			p3.y > r4.y)
+		{
+			if (abs(p1.x - r4.x) <= abs(p1.y - r4.y))
+			{
+				SetRight(x);
+			}
+			else
+			{
+				SetBot(x);
+			}
+			break;
+		}
+		if (p3.x < r2.x &&
+			p3.y > r2.y &&
+			p1.y < r2.y &&
+			p4.x > r2.x)
+		{
+			if (abs(p3.x - r2.x) <= abs(p3.y - r2.y))
+			{
+				SetRight(x);
+			}
+			else
+			{
+				SetTop(x);
+			}
+			break;
+		}
 	}
 }
 
