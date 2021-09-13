@@ -26,6 +26,10 @@ void CreateLevel();
 void CheckLevelCollision();
 void InitPlayer();
 void TranslateLevel();
+void SetTop(int levelIndex);
+void SetBot(int levelIndex);
+void SetLeft(int levelIndex);
+void SetRight(int levelIndex);
 
 // The entry point for a PlayBuffer program
 void MainGameEntry( PLAY_IGNORE_COMMAND_LINE )
@@ -182,6 +186,10 @@ void TranslateLevel()
 
 void CheckBounds()
 {
+	//p1 = top left
+	//p2 = top right
+	//p3 = bot left
+	//p4 = bot right
 	Point2D p1 = { player.getX(), player.getY() };
 	Point2D p2 = { player.getX() + Play::GetSpriteWidth(player.getSpriteID()), player.getY() };
 	Point2D p3 = { player.getX(), player.getY() + Play::GetSpriteHeight(player.getSpriteID()) };
@@ -200,51 +208,66 @@ void CheckBounds()
 		r4 = { levelBlocks[x].getX() + Play::GetSpriteWidth(levelBlocks[x].getSpriteID()), levelBlocks[x].getY() + Play::GetSpriteHeight(levelBlocks[x].getSpriteID()) };
 
 		if (p3.y > r1.y &&
-			p4.x > r1.x &&
-			p3.x < r2.x &&
+			p3.x > r1.x &&
+			p4.x < r2.x &&
 			p1.y < r1.y)
 		{
-			player.setPosY(r1.y - Play::GetSpriteHeight(player.getSpriteID()));
-			player.setVelY(0);
-			player.endJump();
+			//set top
+			SetTop(x);
 			break;
 		}
 		if (p1.y < r3.y &&
-			p4.x > r1.x &&
-			p3.x < r2.x &&
+			p3.x > r1.x &&
+			p4.x < r2.x &&
 			p3.y > r3.y)
 		{
-			player.setPosY(r3.y);
-			player.setVelY(0);
+			//set bot
+			SetBot(x);
 			break;
 		}
 		if (p2.x > r1.x &&
-			p4.y > r1.y &&
-			p2.y < r3.y &&
+			p2.y > r1.y &&
+			p4.y < r3.y &&
 			p1.x < r1.x)
 		{
-			float rev = player.getX();
-			rev = (r1.x - Play::GetSpriteWidth(player.getSpriteID())) - rev;
-			player.setVelX(rev);
-			TranslateLevel();
-			player.setPosX(levelBlocks[x].getX() - Play::GetSpriteWidth(player.getSpriteID()));
-			player.setVelX(0);
+			//set left
+			SetLeft(x);
 			break;
 		}
 		if (p1.x < r2.x &&
-			p4.y > r1.y &&
-			p2.y < r3.y &&
+			p2.y > r1.y &&
+			p4.y < r3.y &&
 			p2.x > r2.x)
 		{
-			float rev = player.getX();
-			rev = rev - r2.x;
-			player.setVelX(rev);
-			TranslateLevel();
-			player.setPosX(levelBlocks[x].getX() + Play::GetSpriteWidth(levelBlocks[x].getSpriteID()));
-			player.setVelX(0);
+			//set right
+			SetRight(x);
 			break;
 		}
-		
+		if (p2.x > r3.x &&
+			p2.y < r3.y &&
+			p1.x < r3.x &&
+			p4.y > r3.y)
+		{
+			if (abs(p2.x - r3.x) <= abs(p2.y - r3.y))
+			{
+				//set left
+				SetLeft(x);
+			}
+			else
+			{
+				//set bot
+				SetBot(x);
+			}
+			break;
+		}
+		//and so on...////////////
+		////////////////////////
+		////////////////////
+		////////////////
+		//////////////
+		/////////////
+		///////////
+
 	}
 }
 
@@ -277,7 +300,42 @@ void CreateLevel()
 	}
 }
 
-void CheckLevelCollision()
+void SetTop(int levelIndex)
 {
+	player.setPosY(levelBlocks[levelIndex].getY() - Play::GetSpriteHeight(player.getSpriteID()));
+	player.setVelY(0);
+	player.endJump();
+}
 
+void SetBot(int levelIndex)
+{
+	player.setPosY(levelBlocks[levelIndex].getY() + Play::GetSpriteHeight(levelBlocks[levelIndex].getSpriteID()));
+	if (player.getVelY() < 0)
+	{
+		player.setVelY(0);
+	}
+}
+
+void SetLeft(int levelIndex)
+{
+	//adjust for velocity so camera doesn't drift
+	float rev = player.getX();
+	rev = (levelBlocks[levelIndex].getX() - Play::GetSpriteWidth(player.getSpriteID())) - rev;
+	player.setVelX(rev);
+	TranslateLevel();
+	//set player pos/vel
+	player.setPosX(levelBlocks[levelIndex].getX() - Play::GetSpriteWidth(player.getSpriteID()));
+	player.setVelX(0);
+}
+
+void SetRight(int levelIndex)
+{
+	//adjust for velocity so camera doesn't drift
+	float rev = player.getX();
+	rev = rev - (levelBlocks[levelIndex].getX() + Play::GetSpriteWidth(levelBlocks[levelIndex].getSpriteID()));
+	player.setVelX(-rev);
+	TranslateLevel();
+	//set player pos/vel
+	player.setPosX(levelBlocks[levelIndex].getX() + Play::GetSpriteWidth(levelBlocks[levelIndex].getSpriteID()));
+	player.setVelX(0);
 }
