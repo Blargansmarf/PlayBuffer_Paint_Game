@@ -19,6 +19,9 @@ const float sprintBonus = 5.0f;
 const float maxVelX = 10.0f;
 const float maxVelY = 11.0f;
 const float jumpHeight = 15.0f;
+const float wallJumpHeight = 9.0f;
+const float wallJumpWidth = 6.0f;
+const float slideResist = 6.0f;
 
 void ApplyPhysics();
 void CheckBounds();
@@ -36,6 +39,11 @@ void MainGameEntry( PLAY_IGNORE_COMMAND_LINE )
 {
 	Play::CreateManager( DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_SCALE );
 
+	Play::ColourSprite(Play::GetSpriteName(1), Play::cBlack);
+	Play::ColourSprite(Play::GetSpriteName(2), Play::cBlack);
+	Play::ColourSprite(Play::GetSpriteName(3), Play::cBlack);
+	Play::ColourSprite(Play::GetSpriteName(4), Play::cBlack);
+
 	CreateLevel();
 	InitPlayer();
 }
@@ -45,6 +53,7 @@ void InitPlayer()
 	player.setAccel(acceleration);
 	player.setPos(DISPLAY_WIDTH / 2, DISPLAY_HEIGHT / 2);
 	player.setVel(0.0f, 0.0f);
+	player.setSlideResist(slideResist);
 	player.setSpriteID(0);
 	player.jump();
 }
@@ -91,6 +100,11 @@ void ApplyPhysics()
 		player.setVelY(maxVelY);
 	}
 
+	if (player.isSliding() && player.getVelY() > player.getSlideResist())
+	{
+		player.setVelY(player.getSlideResist());
+	}
+
 	if (player.getVelX() > 0)
 	{
 		if (player.getVelX() > friction)
@@ -118,6 +132,10 @@ void ApplyPhysics()
 	{
 		if (Play::KeyDown(VK_RIGHT))
 		{
+			if (player.getBlockFace() == 2 && player.isSliding())
+			{
+				player.endSlide();
+			}
 			player.setVelX(player.getVelX() + player.getAccel()*1.5f);
 			if (player.getVelX() > maxVelX + sprintBonus)
 			{
@@ -126,6 +144,10 @@ void ApplyPhysics()
 		}
 		else if (Play::KeyDown(VK_LEFT))
 		{
+			if (player.getBlockFace() == 4 && player.isSliding())
+			{
+				player.endSlide();
+			}
 			player.setVelX(player.getVelX() - player.getAccel()*1.5f);
 			if (player.getVelX() < -maxVelX - sprintBonus)
 			{
@@ -137,6 +159,10 @@ void ApplyPhysics()
 	{
 		if (Play::KeyDown(VK_RIGHT))
 		{
+			if (player.getBlockFace() == 2 && player.isSliding())
+			{
+				player.endSlide();
+			}
 			player.setVelX(player.getVelX() + player.getAccel());
 			if (player.getVelX() > maxVelX)
 			{
@@ -145,6 +171,10 @@ void ApplyPhysics()
 		}
 		else if(Play::KeyDown(VK_LEFT))
 		{
+			if (player.getBlockFace() == 4 && player.isSliding())
+			{
+				player.endSlide();
+			}
 			player.setVelX(player.getVelX() - player.getAccel());
 			if (player.getVelX() < -maxVelX)
 			{
@@ -158,10 +188,29 @@ void ApplyPhysics()
 		player.jump();
 	}
 
-	if (Play::KeyPressed(VK_SPACE) && !player.isJumped())
+	if (Play::KeyPressed(VK_SPACE))
 	{
-		player.setVelY(-jumpHeight);
-		player.jump();
+		if (!player.isJumped())
+		{
+			player.setVelY(-jumpHeight);
+			player.jump();
+		}
+		else if (player.isSliding())
+		{
+			//left side
+			if (player.getBlockFace() == 4)
+			{
+				player.setVelX(-wallJumpWidth);
+			}
+			//right side
+			else if(player.getBlockFace() == 2)
+			{
+				player.setVelX(wallJumpWidth);
+			}
+				
+			player.setVelY(-wallJumpHeight);
+		}
+		player.endSlide();
 	}
 	else if (!Play::KeyDown(VK_SPACE) && player.isJumped() && player.getVelY() < 0)
 	{
@@ -310,19 +359,35 @@ void CheckBounds()
 
 void CreateLevel()
 {
-	levelBlocks[0].setSpriteID(1);
+	levelBlocks[0].setSpriteID(4);
 	levelBlocks[0].setX((DISPLAY_WIDTH * .333f + 75));
 	levelBlocks[0].setY(DISPLAY_HEIGHT * .666f);
 
-	levelBlocks[1].setSpriteID(1);
-	levelBlocks[1].setX((DISPLAY_WIDTH * .333f - 100));
+	levelBlocks[1].setSpriteID(4);
+	levelBlocks[1].setX((DISPLAY_WIDTH * .333f - 300));
 	levelBlocks[1].setY(DISPLAY_HEIGHT * .666f - 220);
 
-	levelBlocks[2].setSpriteID(1);
-	levelBlocks[2].setX((DISPLAY_WIDTH * .333f + 275));
+	levelBlocks[2].setSpriteID(4);
+	levelBlocks[2].setX((DISPLAY_WIDTH * .333f + 425));
 	levelBlocks[2].setY(DISPLAY_HEIGHT * .666f - 220);
 
-	for (int x = 3; x < sizeof(levelBlocks) / sizeof(levelBlocks[0]); x++)
+	levelBlocks[3].setSpriteID(2);
+	levelBlocks[3].setX((DISPLAY_WIDTH * .75f + 245));
+	levelBlocks[3].setY(DISPLAY_HEIGHT * .5f - 200);
+
+	levelBlocks[4].setSpriteID(2);
+	levelBlocks[4].setX((DISPLAY_WIDTH * .25f - 325));
+	levelBlocks[4].setY(DISPLAY_HEIGHT * .5f - 200);
+
+	levelBlocks[5].setSpriteID(3);
+	levelBlocks[5].setX((DISPLAY_WIDTH * .5f));
+	levelBlocks[5].setY(DISPLAY_HEIGHT * .5f - 200);
+
+	levelBlocks[6].setSpriteID(3);
+	levelBlocks[6].setX((DISPLAY_WIDTH * .5f));
+	levelBlocks[6].setY(DISPLAY_HEIGHT * .5f - 300);
+
+	for (int x = 7; x < sizeof(levelBlocks) / sizeof(levelBlocks[0]); x++)
 	{
 		levelBlocks[x].setSpriteID(1);
 		levelBlocks[x].setX((DISPLAY_WIDTH * .333f + 75)*(x+1));
@@ -342,6 +407,7 @@ void SetTop(int levelIndex)
 	player.setPosY(levelBlocks[levelIndex].getY() - Play::GetSpriteHeight(player.getSpriteID()));
 	player.setVelY(0);
 	player.endJump();
+	player.setBlockFace(1);
 }
 
 void SetBot(int levelIndex)
@@ -351,6 +417,7 @@ void SetBot(int levelIndex)
 	{
 		player.setVelY(0);
 	}
+	player.setBlockFace(3);
 }
 
 void SetLeft(int levelIndex)
@@ -363,6 +430,8 @@ void SetLeft(int levelIndex)
 	//set player pos/vel
 	player.setPosX(levelBlocks[levelIndex].getX() - Play::GetSpriteWidth(player.getSpriteID()));
 	player.setVelX(0);
+	player.setBlockFace(4);
+	player.slide();
 }
 
 void SetRight(int levelIndex)
@@ -375,4 +444,6 @@ void SetRight(int levelIndex)
 	//set player pos/vel
 	player.setPosX(levelBlocks[levelIndex].getX() + Play::GetSpriteWidth(levelBlocks[levelIndex].getSpriteID()));
 	player.setVelX(0);
+	player.setBlockFace(2);
+	player.slide();
 }

@@ -10,6 +10,9 @@ Player::Player()
 	width = 0.0f;
 	height = 0.0f;
 	jumped = false;
+	sliding = false;
+	slideResist = 0.0f;
+	blockFace = 0;
 }
 
 Player::~Player()
@@ -118,4 +121,39 @@ void Player::endJump()
 bool Player::isJumped()
 {
 	return jumped;
+}
+
+bool Player::isSliding()
+{
+	return sliding;
+}
+
+void Player::slide()
+{
+	sliding = true;
+}
+
+void Player::endSlide()
+{
+	sliding = false;
+}
+
+void Player::setSlideResist(float s)
+{
+	slideResist = s;
+}
+
+float Player::getSlideResist()
+{
+	return slideResist;
+}
+
+void Player::setBlockFace(int x)
+{
+	blockFace = x;
+}
+
+int Player::getBlockFace()
+{
+	return blockFace;
 }
